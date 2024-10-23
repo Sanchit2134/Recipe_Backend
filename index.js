@@ -11,20 +11,23 @@ const Port = process.env.Port || 4001;
 const app = express();
 
 app.use(express.json());
+
+// Correct CORS configuration
 app.use(cors({
-    origin: '*', // Allow requests from the frontend
-    credentials: true // Enable credentials if using cookies or tokens
-  }));
+    origin: 'http://localhost:3000',  // Use the exact origin of your frontend
+    methods: ['GET','POST','PUT','DELETE'],
+    credentials: true  // Set credentials to true to allow cookies or tokens to be passed
+}));
 
-
-// // Connect to MongoDB
+// MongoDB connection
 mongoose.connect(process.env.MONGO_URL)
-console.log('Mongo Connected')
-app.use('/auth', UserRouter);   //all the endpoints which are going to be related to authentication will be prefixed with /auth
-app.use('/recipe', RecipeRouter); //all the endpoints which are going to be related to recipes will be prefixed with /recipe
+.then(() => console.log('MongoDB Connected'))
+.catch(err => console.error('MongoDB Connection Error:', err));
 
-app.listen(Port,()=>{
+// Routes
+app.use('/auth', UserRouter);
+app.use('/recipe', RecipeRouter);
+
+app.listen(Port, () => {
     console.log(`Server is running on port ${Port}`);
-})
-
-
+});
