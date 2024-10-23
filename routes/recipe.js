@@ -1,7 +1,7 @@
 const express = require('express');
 const RecipeModel = require('../model/Recipes');
 const UserModel = require('../model/Users');
-const verifyToken  = require('../middleware/verifyToken');
+const verifyToken = require('../middleware/verifyToken');
 
 const router = express.Router();
 
@@ -16,14 +16,17 @@ router.get('/', async (req, res) => {
     }
 })
 
-router.post('/', verifyToken , async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
     console.log(req.body)
+    const userID = req.userId
     try {
-        req.body.imageUrls= [req.body.imageUrl];
-        const recipe = new RecipeModel(req.body);
+        req.body.imageUrls = [req.body.imageUrl];
+        const recipe = new RecipeModel({ ...req.body, userOwner: userID });
         await recipe.save();
-        res.json(recipe);
-        console.log(req.body) 
+        res.status(201).json({
+            message: 'Recipe created successfully',
+            data: recipe
+        });
     }
     catch (err) {
         console.log(err)
@@ -31,11 +34,11 @@ router.post('/', verifyToken , async (req, res) => {
     }
 })
 
-router.put('/' , async (req, res) => {
+router.put('/', async (req, res) => {
     try {
-        const recipe = await RecipeModel.findById(req.body.recipeId);  
+        const recipe = await RecipeModel.findById(req.body.recipeId);
         const user = await UserModel.findById(req.body.userID);
-        console.log(recipe,"==")
+        console.log(recipe, "==")
         user.savedRecipes.push(recipe);
         user.save();
         res.json({ savedRecipes: user.savedRecipes });
@@ -50,8 +53,8 @@ router.put('/' , async (req, res) => {
 router.get('/savedRecipes/:id', async (req, res) => {
     const { id } = req.params
     try {
-        const recipe = await RecipeModel.findById(id)   ;
-         return res.json(recipe);
+        const recipe = await RecipeModel.findById(id);
+        return res.json(recipe);
     }
     catch (err) {
         res.json(err);
@@ -60,13 +63,13 @@ router.get('/savedRecipes/:id', async (req, res) => {
 
 // Get all saved recipes for a user
 router.get('/all_recipies_of_a_user/:userID', async (req, res) => {
-    const {userID} = req.params
+    const { userID } = req.params
     try {
         const user = await UserModel.findById(userID)
         if (!user) {
             return res.json({ message: 'User not found' });
         }
-        const recipes = await RecipeModel.find({userOwner: userID});
+        const recipes = await RecipeModel.find({ userOwner: userID });
         console.log('recipes: ', recipes);
         // const savedRecipes = await RecipeModel.find({ _id: { $in: user.savedRecipes } });
         res.json(recipes);

@@ -22,7 +22,6 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
     const user = await UserModel.findOne({ username });
-    console.log('user: ', user);
 
     if (!user) {
         return res.status(400).json({ message: 'User does not exist' });
