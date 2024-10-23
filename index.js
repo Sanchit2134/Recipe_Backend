@@ -11,7 +11,10 @@ const Port = process.env.Port || 4001;
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000', // Allow requests from the frontend
+    credentials: true // Enable credentials if using cookies or tokens
+  }));
 
 
 // // Connect to MongoDB
@@ -23,3 +26,5 @@ app.use('/recipe', RecipeRouter); //all the endpoints which are going to be rela
 app.listen(Port,()=>{
     console.log(`Server is running on port ${Port}`);
 })
+
+

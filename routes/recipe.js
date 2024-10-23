@@ -33,8 +33,8 @@ router.post('/', verifyToken , async (req, res) => {
 
 router.put('/' , async (req, res) => {
     try {
-        const recipe = await RecipeModel.findById(req.body.recipeId);
-        const user = await UserModel.findById(req.body.userId);
+        const recipe = await RecipeModel.findById(req.body.recipeId);  
+        const user = await UserModel.findById(req.body.userID);
         console.log(recipe,"==")
         user.savedRecipes.push(recipe);
         user.save();
@@ -78,3 +78,6 @@ router.get('/all_recipies_of_a_user/:userID', async (req, res) => {
 
 
 module.exports = router;
+
+
+
