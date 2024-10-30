@@ -3,6 +3,7 @@ const UserModel = require('../model/Users');
 const RecipeModel = require('../model/Recipes');
 const router = express.Router();
 const mongoose = require('mongoose');
+const verifyToken = require('../middleware/verifyToken');
 
 // Get all recipes
 router.get('/', async (req, res) => {
@@ -15,7 +16,8 @@ router.get('/', async (req, res) => {
 })
 
 //create a recipe 
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
+  console.log(req.body);
   const recipe = new RecipeModel(req.body);
   try {
     const response = await recipe.save();
@@ -26,7 +28,7 @@ router.post('/', async (req, res) => {
 });
 
 //save a recipe 
-router.put('/', async (req, res) => {
+router.put('/', verifyToken, async (req, res) => {
   try {
     const recipe = await RecipeModel.findById(req.body.recipeID);
     const user = await UserModel.findById(req.body.userID);
@@ -39,9 +41,9 @@ router.put('/', async (req, res) => {
 });
 
 //save a recipe of login user
-router.get('/savedRecipes/ids', async(req,res)=>{
+router.get('/savedRecipes/ids/:userID', async(req,res)=>{
   try {
-    const user = await UserModel.findById(req.body.userID);
+    const user = await UserModel.findById(req.params.userID);
     res.status(200).json({ savedRecipes: user?.savedRecipes });
   } catch (err) {
     console.log(err);
@@ -49,9 +51,9 @@ router.get('/savedRecipes/ids', async(req,res)=>{
 })
 
 //get the saved recipes not the ids
-router.get('/savedRecipes', async(req,res)=>{
+router.get('/savedRecipes/:userID', async(req,res)=>{
   try {
-    const user = await UserModel.findById(req.body.userID);
+    const user = await UserModel.findById(req.params.userID);
     const savedRecipes = await RecipeModel.find({_id: {$in: user.savedRecipes}})
     res.status(200).json({ savedRecipes });
   } catch (err) {

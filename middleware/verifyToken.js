@@ -5,9 +5,10 @@ const verifyToken = (req, res, next) => {
         const token = req.headers.authorization;
         console.log(token, 'io')
         if (token) {
-            const decode = jwt.verify(token, 'secret')
-            req.userId = decode.id;
-            next()
+            const decode = jwt.verify(token, 'secret', (err)=>{
+                if(err) res.sendStatus(403);
+                next();
+            });
         }
     }
     catch (err) {
