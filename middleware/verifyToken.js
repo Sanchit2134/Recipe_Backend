@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const verifyToken = (req, res, next) => {
     try {
         const token = req.headers.authorization;
-        // console.log(token)
+        console.log(token, 'io')
         if (token) {
             const decode = jwt.verify(token, 'secret')
             req.userId = decode.id;

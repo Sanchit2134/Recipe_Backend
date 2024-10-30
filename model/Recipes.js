@@ -7,7 +7,7 @@ const RecipeSchema = new mongoose.Schema({
     },
     ingredients: [{ type: String, required: true }],
     instruction: { type: String, required: true },
-    imageUrls: [{ type: String, required: true }], // Corrected to be an array of strings
+    imageUrls: { type: String, required: true }, 
     cookingTime: { type: Number, required: true },
     userOwner: { type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true }
 });

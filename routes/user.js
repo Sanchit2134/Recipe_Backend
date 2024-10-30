@@ -7,6 +7,7 @@ const UserModel = require('../model/Users');
 //register
 router.post('/register', async (req, res) => {
     const { username, password } = req.body;
+    console.log(req.body);
     const user = await UserModel.findOne({ username });
 
     if (user) {
@@ -21,6 +22,8 @@ router.post('/register', async (req, res) => {
 //login
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
+    console.log(req.body);
+    
     const user = await UserModel.findOne({ username });
 
     if (!user) {
@@ -28,9 +31,9 @@ router.post('/login', async (req, res) => {
     }
     const isPassswordValid = await bcrypt.compare(password, user.password)
 
-    // if (!isPassswordValid) {
-    //     return res.status(403).json({ message: 'Invalid username and password' });
-    // }
+    if (!isPassswordValid) {
+        return res.status(403).json({ message: 'Invalid username and password' });
+    }
     const token = jwt.sign({ id: user._id }, 'secret', { expiresIn: '1h' });
     res.status(200).json({ token, userID: user._id });
 

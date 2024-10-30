@@ -2,20 +2,20 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const UserRouter = require('./routes/user');
-const RecipeRouter = require('./routes/recipe');
+const RecipeRouter = require('./routes/recipe'); // Make sure the path is correct
 const dotenv = require('dotenv');
 
 dotenv.config();
 
-const Port = process.env.Port || 4001;
+const Port = process.env.PORT || 4001;
 const app = express();
 
 app.use(express.json());
 
 // Correct CORS configuration
 app.use(cors({
-  origin: 'http://localhost:3000',  // Your frontend URL
-  credentials: true                 // Enable credentials
+  origin: 'http://localhost:3000',
+  credentials: true
 }));
 
 // MongoDB connection
@@ -25,7 +25,7 @@ mongoose.connect(process.env.MONGO_URL)
 
 // Routes
 app.use('/auth', UserRouter);
-app.use('/recipe', RecipeRouter);
+app.use('/recipe', RecipeRouter); // Ensure this is the correct router
 
 app.listen(Port, () => {
   console.log(`Server is running on port ${Port}`);
